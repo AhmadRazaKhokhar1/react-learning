@@ -24,6 +24,7 @@ export default function formikPage() {
       {(props) => {
         const { errors, values, touched } = props;
         console.log({ errors, values, touched });
+
         return (
           <Form>
             <div className="flex items-center-justify-between w-full h-auto p-2 gap-2">
