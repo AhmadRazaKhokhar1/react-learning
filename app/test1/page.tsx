@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, SubmitEvent, SubmitEventHandler, useEffect, useState } from "react";
 
 enum Gender {
   MALE = "MALE",
@@ -17,11 +17,16 @@ export default function page() {
     dob: `${new Date().getFullYear()}-${new Date().toLocaleDateString("en-US", { month: "2-digit" })}-${new Date().getDate()}`,
   });
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e:SubmitEvent) => {
+    e.preventDefault()
+    console.log("The form is submitted", form)
+  };
 
-  const handleFormChange = (e) => {
+  const handleFormChange = (e:ChangeEvent<HTMLInputElement, EventTarget>) => {
+    if(!e|| e===undefined){
+        return;
+    }
     const { value, name } = e.target;
-    console.log("******", e);
     if (name === "dob") {
       const date = new Date(value).toLocaleDateString("en-US", {
         day: "2-digit",
@@ -36,15 +41,10 @@ export default function page() {
         [name]: formattedDateString,
       }));
     } else if (name === "isAdult") {
-      console.log(value, "VALUE FROM IS ADULT CHANGE EVENT");
+      console.log((Boolean(value)), "VALUE FROM IS ADULT CHANGE EVENT");
       setForm((prev) => ({
         ...prev,
-        [name]: value === "false" ? true : false,
-      }));
-    } else if (name === "gender") {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value === "MALE" ? Gender.MALE : Gender.FEMALE,
+        [name]: !(Boolean(prev.isAdult)),
       }));
     } else {
       setForm((prev) => ({
@@ -52,19 +52,11 @@ export default function page() {
         [name]: value,
       }));
     }
-    console.log(
-      "value from input handle change: =====> %s, with name: %s",
-      value,
-      name,
-    );
   };
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="flex items-center-justify-between w-full h-auto p-2 gap-2">
           <label htmlFor="firstName" className="font-bold text-gray-800">
             First Name
@@ -193,7 +185,8 @@ export default function page() {
             onChange={handleFormChange}
           />
         </div>
-        <button className="bg-green-500 p-3 border-green-800 rounded-2xl cursor-pointer">
+        <button className="bg-green-500 p-3 border-green-800 rounded-2xl cursor-pointer"
+        >
           Submit
         </button>
       </form>
